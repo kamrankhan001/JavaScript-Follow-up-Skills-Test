@@ -21,6 +21,103 @@
   <pre id="responseOutput"></pre>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="./updatePost.js"></script>
+  <script>
+    /**
+     * Handles the AJAX form submission to update a post using the JSONPlaceholder API.
+     * Allows adding custom key value pairs before sending the data.
+     * @author Kamran
+     * @link https://jsonplaceholder.typicode.com/posts/:id
+     */
+
+    const form = document.getElementById('updatePostForm');
+    const customFieldsDiv = document.getElementById('customFields');
+    const responseOutput = document.getElementById('responseOutput');
+
+    /**
+     * Dynamically adds a custom key value field pair to the form
+     */
+    function addCustomField() {
+      const fieldHTML = `
+        <div class="customField">
+          <input type="text" placeholder="Key" class="customKey">
+          <input type="text" placeholder="Value" class="customValue">
+          <button type="button" onclick="this.parentElement.remove()">Remove</button>
+          <br><br>
+        </div>
+      `;
+      customFieldsDiv.insertAdjacentHTML('beforeend', fieldHTML);
+    }
+
+    /**
+     * Collects the form data and returns an object including standard and custom fields
+     * @returns {Object} data - The final data object to be submitted
+     */
+    function collectFormData() {
+      const formData = new FormData(form);
+      const data = {
+        title: formData.get('title'),
+        body: formData.get('body'),
+        userId: parseInt(formData.get('userId'))
+      };
+
+      const keys = document.querySelectorAll('.customKey');
+      const values = document.querySelectorAll('.customValue');
+      keys.forEach((keyInput, index) => {
+        const key = keyInput.value;
+        const value = values[index].value;
+        if (key) data[key] = value;
+      });
+
+      return { data, postId: formData.get('postId') };
+    }
+
+    /**
+     * Sends the PUT request to update the post using Axios
+     * @param {string|number} postId - ID of the post to update
+     * @param {Object} data - The updated post data including custom fields
+     */
+    async function updatePost(postId, data) {
+      showLoading();
+      try {
+        const response = await axios.put(`https://jsonplaceholder.typicode.com/posts/${postId}`, data);
+        showResponse(response.data);
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    /**
+     * Displays a loading message to the user
+     */
+    function showLoading() {
+      responseOutput.textContent = 'Updating post... Please wait.';
+    }
+
+    /**
+     * Displays the response data in a readable format
+     * @param {Object} responseData
+     */
+    function showResponse(responseData) {
+      responseOutput.textContent = JSON.stringify(responseData, null, 2);
+    }
+
+    /**
+     * Displays error message to user
+     * @param {string} message
+     */
+    function showError(message) {
+      responseOutput.textContent = `Error: ${message}`;
+    }
+
+    // Attach event listener to form
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const { data, postId } = collectFormData();
+      updatePost(postId, data);
+    });
+
+    // Expose addCustomField globally so it's callable from HTML
+    window.addCustomField = addCustomField;
+  </script>
 </body>
 </html>
