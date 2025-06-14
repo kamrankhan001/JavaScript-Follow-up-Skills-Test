@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Update Post</title>
+</head>
+<body>
+  <h2>Update Post</h2>
+  <form id="updatePostForm">
+    <label>Post ID: <input type="number" name="postId" required></label><br><br>
+    <label>Title: <input type="text" name="title"></label><br><br>
+    <label>Body: <textarea name="body"></textarea></label><br><br>
+    <label>User ID: <input type="number" name="userId"></label><br><br>
+
+    <div id="customFields"></div>
+
+    <button type="button" onclick="addCustomField()">Add Custom Field</button><br><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <pre id="responseOutput"></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="./updatePost.js"></script>
+</body>
+</html>
